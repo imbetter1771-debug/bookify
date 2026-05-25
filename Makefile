@@ -1,3 +1,6 @@
+include .env.development
+export
+
 COMPOSE=docker compose --env-file .env.development
 
 dev-up:
@@ -9,5 +12,16 @@ dev-down:
 dev-logs:
 	@$(COMPOSE) logs -f
 
+migrate-up:
+	@migrate -path migrations \
+	-database "$(DATABASE_URL)" up
+
+migrate-down:
+	@migrate -path migrations \
+	-database "$(DATABASE_URL)" down
+
+migrate-create:
+	@migrate create -ext sql -dir migrations -seq $(name)
+
 backend-run:
-	@cd apps/backend && set -a && source ../../.env.development && set +a && go run cmd/api/main.go
+	@cd apps/backend && go run cmd/api/main.go
